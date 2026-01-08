@@ -54,7 +54,7 @@ class ApiService {
   async register(companyName, password) {
     return this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ companyName, password }),
+      body: JSON.stringify({ username: companyName, password }),
     });
   }
 
