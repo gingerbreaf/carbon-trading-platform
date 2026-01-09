@@ -1,50 +1,46 @@
 // API Service Layer
+import axios from 'axios';
+
 const BASE_URL = 'http://localhost:8080/api/v1';
 
 class ApiService {
   constructor() {
-    this.baseURL = BASE_URL;
-  }
-
-  getAuthHeaders() {
-    const token = localStorage.getItem('token');
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` })
-    };
-  }
-
-  async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
-    const config = {
-      ...options,
+    // Create axios instance with base configuration
+    this.client = axios.create({
+      baseURL: BASE_URL,
       headers: {
-        ...this.getAuthHeaders(),
-        ...options.headers,
+        'Content-Type': 'application/json',
       },
-    };
+    });
 
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: 'Request failed' }));
-        throw new Error(error.message || `HTTP ${response.status}`);
+    // Add request interceptor to attach auth token
+    this.client.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       }
+    );
 
-      return await response.json();
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }
+    // Add response interceptor for error handling
+    this.client.interceptors.response.use(
+      (response) => response.data,
+      (error) => {
+        console.error('API Error:', error);
+        const message = error.response?.data?.message || error.message || 'Request failed';
+        throw new Error(message);
+      }
+    );
   }
 
   // Authentication
   async login(username, password) {
-    const data = await this.request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    });
+    const data = await this.client.post('/auth/login', { username, password });
     if (data.token) {
       localStorage.setItem('token', data.token);
     }
@@ -52,63 +48,46 @@ class ApiService {
   }
 
   async register(companyName, password) {
-    return this.request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ username: companyName, password }),
-    });
+    return this.client.post('/auth/register', { username: companyName, password });
   }
 
   // Account & Balance
   async getAccountBalance() {
-    return this.request('/account/balance');
+    return this.client.get('/account/balance');
   }
 
   // My Requests (Outgoing)
   async getMyRequests() {
-    return this.request('/requests/my');
+    return this.client.get('/requests/my');
   }
 
   async createRequest(requestData) {
-    return this.request('/requests/new', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
-    });
+    return this.client.post('/requests/new', requestData);
   }
 
   async updateRequest(id, requestData) {
-    return this.request(`/requests/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(requestData),
-    });
+    return this.client.put(`/requests/${id}`, requestData);
   }
 
   async deleteRequest(id) {
-    return this.request(`/requests/${id}`, {
-      method: 'DELETE',
-    });
+    return this.client.delete(`/requests/${id}`);
   }
 
   // Incoming Requests
   async getIncomingRequests() {
-    return this.request('/requests/incoming');
+    return this.client.get('/requests/incoming');
   }
 
   async updateRequestStatus(id, status) {
-    return this.request(`/requests/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    });
+    return this.client.patch(`/requests/${id}/status`, { status });
   }
 
   async bulkUpdateStatus(ids, status) {
-    return this.request('/requests/bulk-action', {
-      method: 'POST',
-      body: JSON.stringify({ ids, status }),
-    });
+    return this.client.post('/requests/bulk-action', { ids, status });
   }
 
   async getAlerts() {
-    return this.request('/requests/alerts');
+    return this.client.get('/requests/alerts');
   }
 }
 

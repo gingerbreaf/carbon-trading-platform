@@ -39,11 +39,13 @@ const RequestModal = ({ request, onClose }) => {
     setLoading(true);
 
     try {
+      // Map frontend field names to backend API field names
       const payload = {
-        ...formData,
-        carbonUnitPrice: parseFloat(formData.carbonUnitPrice),
-        carbonQuantity: parseInt(formData.carbonQuantity),
-        targetCompanyId: parseInt(formData.targetCompanyId)
+        targetCompanyId: parseInt(formData.targetCompanyId),
+        price: parseFloat(formData.carbonUnitPrice),
+        quantity: parseInt(formData.carbonQuantity),
+        reason: formData.requestReason,
+        type: formData.requestType
       };
 
       if (isEditing) {
