@@ -27,13 +27,19 @@ const Layout = ({ children }) => {
               to="/" 
               className={isActive('/') ? 'nav-link active' : 'nav-link'}
             >
-              Dashboard
+              My Requests
             </Link>
             <Link 
               to="/requests-received" 
               className={isActive('/requests-received') ? 'nav-link active' : 'nav-link'}
             >
               Requests Received
+            </Link>
+            <Link 
+              to="/dashboard" 
+              className={isActive('/dashboard') ? 'nav-link active' : 'nav-link'}
+            >
+              Analytics
             </Link>
           </div>
 

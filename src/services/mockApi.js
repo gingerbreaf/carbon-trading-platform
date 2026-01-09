@@ -351,6 +351,102 @@ class MockApiService {
     
     return [...overdueIncoming, ...overdueOutgoing];
   }
+
+  // Dashboard Analytics
+  async getDashboardData(timeRange = 30) {
+    await this.delay(300);
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Unauthorized');
+    }
+    
+    // Generate mock time series data for request volume
+    const requestTimeSeries = [];
+    const priceTimeSeries = [];
+    const days = parseInt(timeRange);
+    
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Simulate some variation in requests
+      const buyRequests = Math.floor(Math.random() * 10) + 2;
+      const sellRequests = Math.floor(Math.random() * 8) + 1;
+      
+      requestTimeSeries.push({
+        date: dateStr,
+        buyRequests,
+        sellRequests,
+      });
+      
+      // Simulate price variations
+      const basePrice = 50;
+      const variation = Math.random() * 20 - 10;
+      const avgPrice = basePrice + variation;
+      
+      priceTimeSeries.push({
+        date: dateStr,
+        avgPrice: Math.round(avgPrice * 100) / 100,
+        minPrice: Math.round((avgPrice - 5 - Math.random() * 5) * 100) / 100,
+        maxPrice: Math.round((avgPrice + 5 + Math.random() * 5) * 100) / 100,
+      });
+    }
+    
+    // Approval rates data
+    const approvalRates = [
+      { name: 'Accepted', value: 45, color: '#00C49F' },
+      { name: 'Rejected', value: 15, color: '#FF8042' },
+      { name: 'Pending', value: 30, color: '#FFBB28' },
+      { name: 'Cancelled', value: 10, color: '#999999' },
+    ];
+    
+    // Top trading partners
+    const topPartners = [
+      { company: 'Tesla Inc', transactions: 25 },
+      { company: 'Google LLC', transactions: 20 },
+      { company: 'Apple Inc', transactions: 18 },
+      { company: 'Microsoft', transactions: 15 },
+      { company: 'Amazon AWS', transactions: 12 },
+    ];
+    
+    // Volume by request type
+    const volumeByType = [
+      { type: 'Buy Requests', volume: 3500 },
+      { type: 'Sell Requests', volume: 2800 },
+    ];
+    
+    // Activity by day of week
+    const activityByDay = [
+      { day: 'Monday', requests: 45 },
+      { day: 'Tuesday', requests: 52 },
+      { day: 'Wednesday', requests: 48 },
+      { day: 'Thursday', requests: 55 },
+      { day: 'Friday', requests: 40 },
+      { day: 'Saturday', requests: 15 },
+      { day: 'Sunday', requests: 10 },
+    ];
+    
+    // Calculate aggregate metrics
+    const totalVolume = 6300; // tonnes
+    const avgResponseTime = 24.5; // hours
+    const successRate = 75.0; // percentage
+    const avgPrice = 52.50; // SGD/tonne
+    
+    return {
+      requestTimeSeries,
+      priceTimeSeries,
+      approvalRates,
+      topPartners,
+      volumeByType,
+      activityByDay,
+      totalVolume,
+      avgResponseTime,
+      successRate,
+      avgPrice,
+    };
+  }
 }
 
 export default new MockApiService();

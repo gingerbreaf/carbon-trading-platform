@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import RequestsReceived from './pages/RequestsReceived';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 function App() {
@@ -33,6 +34,17 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <RequestsReceived />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Dashboard />
                 </Layout>
               </ProtectedRoute>
             }

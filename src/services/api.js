@@ -102,6 +102,11 @@ class ApiService {
   async getAlerts() {
     return this.client.get('/requests/alerts');
   }
+
+  // Dashboard Analytics
+  async getDashboardData(timeRange = 30) {
+    return this.client.get(`/analytics/dashboard?days=${timeRange}`);
+  }
 }
 
 // Export mock API if enabled, otherwise export real API
