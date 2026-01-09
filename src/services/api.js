@@ -1,7 +1,11 @@
 // API Service Layer
 import axios from 'axios';
+import mockApi from './mockApi.js';
 
 const BASE_URL = 'http://localhost:8080/api/v1';
+
+// Check if we should use mock API (via environment variable)
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 class ApiService {
   constructor() {
@@ -11,6 +15,7 @@ class ApiService {
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 10000, // 10 second timeout
     });
 
     // Add request interceptor to attach auth token
@@ -32,6 +37,14 @@ class ApiService {
       (response) => response.data,
       (error) => {
         console.error('API Error:', error);
+        
+        // Handle network errors (backend not running)
+        if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          const message = 'Cannot connect to backend server. Make sure the backend is running on http://localhost:8080, or enable mock API by setting VITE_USE_MOCK_API=true in .env.local';
+          throw new Error(message);
+        }
+        
+        // Handle other errors
         const message = error.response?.data?.message || error.message || 'Request failed';
         throw new Error(message);
       }
@@ -91,5 +104,16 @@ class ApiService {
   }
 }
 
-export default new ApiService();
+// Export mock API if enabled, otherwise export real API
+const apiService = USE_MOCK_API ? mockApi : new ApiService();
+
+if (USE_MOCK_API) {
+  console.log('🔧 Using Mock API Service (backend not required)');
+} else {
+  console.log('🌐 Using Real API Service');
+  console.log('⚠️  Make sure the backend is running on http://localhost:8080');
+  console.log('💡 To use mock API instead, set VITE_USE_MOCK_API=true in .env.local');
+}
+
+export default apiService;
 
