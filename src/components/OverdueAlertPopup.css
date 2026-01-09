@@ -1,0 +1,144 @@
+/* Overdue Alert Popup Modal */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.popup-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popup-icon {
+  font-size: 2rem;
+}
+
+.popup-header h2 {
+  margin: 0;
+  color: #d97706;
+  font-size: 1.25rem;
+}
+
+.popup-content {
+  padding: 1.5rem;
+}
+
+.popup-message {
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.popup-message strong {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.overdue-list {
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.overdue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #fbbf24;
+}
+
+.overdue-item:last-child {
+  margin-bottom: 0;
+}
+
+.overdue-company {
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.overdue-type {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #fbbf24;
+  color: #78350f;
+  margin: 0 0.5rem;
+}
+
+.overdue-quantity {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.popup-actions {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-popup-primary {
+  padding: 0.75rem 1.5rem;
+  background: #d97706;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-popup-primary:hover {
+  background: #b45309;
+}
+

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import RequestTable from '../components/RequestTable';
+import OverdueAlertPopup from '../components/OverdueAlertPopup';
 import './RequestsReceived.css';
 
 const RequestsReceived = () => {
@@ -9,6 +10,7 @@ const RequestsReceived = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [overdueAlerts, setOverdueAlerts] = useState([]);
+  const [showOverduePopup, setShowOverduePopup] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -24,10 +26,11 @@ const RequestsReceived = () => {
       ]);
       setRequests(requestsData);
       
-      // Show overdue alert if any
+      // Show overdue alert popup if any
       const overdue = requestsData.filter(r => r.isOverdue && r.status === 'PENDING');
       if (overdue.length > 0) {
         setOverdueAlerts(overdue);
+        setShowOverduePopup(true);
       }
     } catch (err) {
       setError('Failed to load requests: ' + err.message);
@@ -105,8 +108,8 @@ const RequestsReceived = () => {
     }
   };
 
-  const dismissAlert = () => {
-    setOverdueAlerts([]);
+  const dismissOverduePopup = () => {
+    setShowOverduePopup(false);
   };
 
   if (loading) {
@@ -133,14 +136,12 @@ const RequestsReceived = () => {
 
       {error && <div className="error-banner">{error}</div>}
 
-      {overdueAlerts.length > 0 && (
-        <div className="alert-banner">
-          <div className="alert-content">
-            <strong>⚠️ Overdue Requests!</strong>
-            <p>You have {overdueAlerts.length} request(s) that are overdue (more than 7 days old)</p>
-          </div>
-          <button onClick={dismissAlert} className="alert-dismiss">×</button>
-        </div>
+      {/* Overdue Alert Popup */}
+      {showOverduePopup && (
+        <OverdueAlertPopup 
+          overdueRequests={overdueAlerts}
+          onClose={dismissOverduePopup}
+        />
       )}
 
       <RequestTable
